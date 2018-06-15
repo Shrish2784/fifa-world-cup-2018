@@ -11,9 +11,7 @@ def index(request):
         match_json = json.loads(response.order_by("-id")[0].match_details)
         print(match_json)
         match_object = datamodels.CurrentMatch(**match_json[0])
-        print(match_json)
-        print(type(json.dumps(match_object.__dict__)))
-        return json.dumps(match_object.__dict__)
+        return HttpResponse(json.dumps(match_object.__dict__))
 
     else:
         d = str(datetime.datetime.now())
@@ -21,11 +19,11 @@ def index(request):
         if time <= 12:
             response = models.PastMatchModel.objects.all()
             if len(response) > 0:
-                return response.order_by("-id")[0].matches
+                return HttpResponse(response.order_by("-id")[0].matches)
         else:
             response = models.FutureMatchModel.objects.all()
             if len(response) > 0:
-                return response.order_by("-id")[0].matches
+                return HttpResponse(response.order_by("-id")[0].matches)
     dict = {}
     dict['error'] = "No data to provide!"
     print("---------------Debugging----------------------")
