@@ -9,6 +9,7 @@ def index(request):
     response = models.CurrentMatchModel.objects.all()
     if len(response) > 0:
         match_json = json.loads(response.order_by("-id")[0].match_details)
+        print(match_json)
         match_object = datamodels.CurrentMatch(**match_json)
         return json.dumps(match_object)
 

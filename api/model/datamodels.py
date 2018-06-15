@@ -1,5 +1,5 @@
 class Match():
-    def __init__(self, home_team, away_team, home_team_goal, away_team_goal, date):
+    def __init__(self, home_team, away_team, home_team_goal, away_team_goal, date, **kwargs):
         self.home_team = home_team
         self.away_team = away_team
         self.home_team_goal = home_team_goal
@@ -9,8 +9,8 @@ class Match():
 
 class PastMatch(Match):
 
-    def __init__(self, home_team, away_team, home_team_goal, away_team_goal, date):
-        super().__init__(home_team, away_team, home_team_goal, away_team_goal, date)
+    def __init__(self, home_team, away_team, home_team_goal, away_team_goal, date, **kwargs):
+        super().__init__(home_team, away_team, home_team_goal, away_team_goal, date, **kwargs)
         self.winner = self._get_winner(home_team, away_team, home_team_goal, away_team_goal)
 
     def _get_winner(self, home_team, away_team, home_team_goal, away_team_goal):
@@ -24,8 +24,8 @@ class PastMatch(Match):
 
 class CurrentMatch(Match):
     def __init__(self, home_team, away_team, home_team_goal, away_team_goal, date, time, home_team_event,
-                 away_team_event):
-        super().__init__(home_team, away_team, home_team_goal, away_team_goal, date)
+                 away_team_event, **kwargs):
+        super().__init__(home_team, away_team, home_team_goal, away_team_goal, date, **kwargs)
         self.time = time
         self.home_team_event = home_team_event
         self.away_team_event = away_team_event
