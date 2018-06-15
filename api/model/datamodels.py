@@ -17,5 +17,12 @@ class CurrentMatch(Match):
                  away_team_events, **kwargs):
         super().__init__(home_team, away_team, datetime, winner, **kwargs)
         self.time = time
-        self.home_team_event = home_team_events[-1]
-        self.away_team_event = away_team_events[-1]
+        if len(home_team_events) > 0:
+            self.home_team_event = home_team_events[-1]
+        else:
+            self.home_team_event = None
+
+        if len(away_team_events) > 0:
+            self.away_team_event = away_team_events[-1]
+        else:
+            self.away_team_event = None
