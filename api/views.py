@@ -11,7 +11,7 @@ def index(request):
         match_json = json.loads(response.order_by("-id")[0].match_details)
         print(match_json)
         match_object = datamodels.CurrentMatch(**match_json[0])
-        return json.dumps(match_object)
+        return json.dumps(match_object.__dict__)
 
     else:
         d = str(datetime.datetime.now())
