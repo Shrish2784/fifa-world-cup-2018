@@ -1,5 +1,6 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
 from . import models
+import logging
 
 sched = BlockingScheduler()
 
@@ -9,6 +10,11 @@ def timed_job():
     res = requests.get(url).json()
 
     objects = models.Match.objects.all().delete()
+
+
+    log = logging.getLogger("my-logger")
+    log.info("Hello, world")
+
 
     model = models.Match.objects.create(match=res)
     model.save()
