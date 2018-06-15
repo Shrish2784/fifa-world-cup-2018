@@ -2,26 +2,28 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from . import models
 import requests
 import json
-from model import datamodels
-
+from .model import datamodels
 
 sched = BlockingScheduler()
 url = 'http://worldcup.sfg.io/matches/{}'
 
+
 @sched.scheduled_job('interval', minutes=.1)
 def sync_current_match():
     res = requests.get(url.format('current')).json()
-
+    print("Scheduled job sync_current_match ran")
     model = models.CurrentMatchModel.objects.create(match_detail=json.dumps(res))
     model.save()
 
     models.CurrentMatchModel.objects.exclude(id=model.id).delete()
+
 
 @sched.scheduled_job('interval', minutes=60)
 def sync_matches():
     completed = []
     future = []
     matches = requests.get(url.format('')).json()
+    print("Scheduled job sync_matches ran")
     for match in matches:
         if match['status'] == 'completed':
             completed.append(match)
