@@ -15,14 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from api import resources
-
-
-match_resource = resources.MatchResource()
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('api.urls')),
-    path('api/', include(match_resource.urls))
 ]
