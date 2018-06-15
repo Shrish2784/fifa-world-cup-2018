@@ -1,4 +1,4 @@
-class Match(object):
+class Match():
     def __init__(self, home_team, away_team, home_team_goal, away_team_goal, date):
         self.home_team = home_team
         self.away_team = away_team
@@ -7,7 +7,7 @@ class Match(object):
         self.date = date
 
 
-class PastMatch(object, Match):
+class PastMatch(Match):
 
     def __init__(self, home_team, away_team, home_team_goal, away_team_goal, date):
         super().__init__(home_team, away_team, home_team_goal, away_team_goal, date)
@@ -22,7 +22,7 @@ class PastMatch(object, Match):
             return "Tie"
 
 
-class CurrentMatch(object, Match):
+class CurrentMatch(Match):
     def __init__(self, home_team, away_team, home_team_goal, away_team_goal, date, time, home_team_event,
                  away_team_event):
         super().__init__(home_team, away_team, home_team_goal, away_team_goal, date)
