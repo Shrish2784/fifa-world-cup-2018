@@ -1,0 +1,1 @@
+web: guicorn fifapi.wasgi
