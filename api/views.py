@@ -1,7 +1,6 @@
-from django.shortcuts import render
 from django.http import HttpResponse
 from .  import models
-from model import datamodels
+from .model import datamodels
 import datetime
 import json
 
