@@ -11,19 +11,19 @@ url = 'http://worldcup.sfg.io/matches/{}'
 @sched.scheduled_job('interval', minutes=.1)
 def sync_current_match():
     res = requests.get(url.format('current')).json()
-    print("Scheduled job sync_current_match ran")
+    print("----------------------Scheduled job sync_current_match ran---------------------------------")
     model = models.CurrentMatchModel.objects.create(match_details=json.dumps(res))
     model.save()
 
     models.CurrentMatchModel.objects.exclude(id=model.id).delete()
 
 
-@sched.scheduled_job('interval', minutes=60)
+@sched.scheduled_job('interval', minutes=.1)
 def sync_matches():
     completed = []
     future = []
     matches = requests.get(url.format('')).json()
-    print("Scheduled job sync_matches ran")
+    print("-----------------Scheduled job sync_matches ran-----------------------")
     for match in matches:
         if match['status'] == 'completed':
             completed.append(match)
