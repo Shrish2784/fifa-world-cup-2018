@@ -1,1 +1,1 @@
-web: guicorn fifapi.wasgi
+web: gunicorn fifapi.wsgi
