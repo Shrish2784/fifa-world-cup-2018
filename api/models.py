@@ -1,5 +1,11 @@
 from django.db import models
 
 # Create your models here.
-class Match(models.Model):
-    matches = models.CharField(max_length=20000, null=True)
+class PastMatchModel(models.Model):
+    matches = JSONField()
+
+class CurrentMatchModel(models.Model):
+    match_details = JSONField()
+
+class FutureMatchModel(models.Model):
+    matches = JSONField()
