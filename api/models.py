@@ -7,4 +7,4 @@ class Match(models.Model):
     # goal_home = models.IntegerField(blank=True)
     # goal_away = models.IntegerField(blank=True)
 
-    matches = models.CharField(max_length=20000)
+    matches = models.CharField(max_length=20000, null=True)
