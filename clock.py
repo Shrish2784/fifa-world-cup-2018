@@ -1,8 +1,8 @@
 from apscheduler.schedulers.blocking import BlockingScheduler
-from . import models
+from api import models
 import requests
 import json
-from .model import datamodels
+from api.model import datamodels
 
 sched = BlockingScheduler()
 url = 'http://worldcup.sfg.io/matches/{}'
