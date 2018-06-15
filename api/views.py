@@ -10,4 +10,4 @@ def index(request):
     url = 'http://worldcup.sfg.io/matches/current'
     res = requests.get(url).json()
 
-    return HttpResponse(res[0])
+    return HttpResponse(res)
