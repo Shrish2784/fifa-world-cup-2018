@@ -25,6 +25,7 @@ def index(request):
                 return response.order_by("-id")[0].matches
     dict = {}
     dict['error'] = "No data to provide!"
+    print("---------------Debugging----------------------")
     return HttpResponse(json.dumps(dict))
 
 
