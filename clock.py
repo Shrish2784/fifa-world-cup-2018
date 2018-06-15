@@ -12,7 +12,7 @@ url = 'http://worldcup.sfg.io/matches/{}'
 def sync_current_match():
     res = requests.get(url.format('current')).json()
     print("Scheduled job sync_current_match ran")
-    model = models.CurrentMatchModel.objects.create(match_detail=json.dumps(res))
+    model = models.CurrentMatchModel.objects.create(match_details=json.dumps(res))
     model.save()
 
     models.CurrentMatchModel.objects.exclude(id=model.id).delete()
