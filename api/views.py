@@ -23,40 +23,50 @@ def index(request):
     result = validate_data(response)
     if result['status']:
         match_object = datamodels.CurrentMatch(**result['match_json'][0])
-        return HttpResponse(json.dumps(match_object.__dict__))
+        data = match_object.__dict__
+        res = {
+            'type': 'present',
+            'fixtures': data
+        }
+        return HttpResponse(json.dumps(res))
     else:
         fmt = '%Y-%m-%d %H:%M:%S %Z%z'
         tz = pytz.timezone('Asia/Kolkata')
         date = tz.localize(datetime.datetime.now()).strftime(fmt)
-        print("#####################################################")
         print(date)
         hour = int(date[11: 13])
         minutes = (int(date[14: 16])) / 60
         time = int(int(hour + minutes) + 5.5)
         print(time)
-        print("#####################################################")
         if time <= 13:
             response = models.PastMatchModel.objects.all()
             if len(response) > 0:
-                return HttpResponse(response.order_by("-id")[0].matches)
+                data = response.order_by("-id")[0].matches
+                res = {
+                    'type': 'past',
+                    'fixtures': data
+                }
+                return HttpResponse(json.dumps(res))
         else:
             response = models.FutureMatchModel.objects.all()
             if len(response) > 0:
-                return HttpResponse(response.order_by("-id")[0].matches)
+                data = response.order_by("-id")[0].matches
+                res = {
+                    'type': 'future',
+                    'fixtures': data
+                }
+                return HttpResponse(json.dumps(res))
     dict = {}
     dict['error'] = "No data to provide!"
-    print("---------------Debugging----------------------")
     return HttpResponse(json.dumps(dict))
 
 
 def sync_current_match(request):
     res = requests.get(url.format('current')).json()
-    print("----------------------Scheduled job sync_current_match ran---------------------------------")
     model = models.CurrentMatchModel.objects.create(match_details=json.dumps(res))
     model.save()
 
     models.CurrentMatchModel.objects.exclude(id=model.id).delete()
-    return HttpResponse("success")
 
 
 def sync_past_future_match(request):
