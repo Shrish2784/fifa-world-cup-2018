@@ -1,8 +1,6 @@
-import django
-django.setup()
-
 from apscheduler.schedulers.blocking import BlockingScheduler
 from api import models
+print("----------------------Scheduled job sync_current_match Import---------------------------------")
 import requests
 import json
 from api.model import datamodels
