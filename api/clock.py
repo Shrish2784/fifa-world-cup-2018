@@ -7,7 +7,7 @@ url = 'https://worldcup-18.herokuapp.com/{}'
 
 @sched.scheduled_job('interval', minutes=.1)
 def sync_current_match():
-    res = requests.get(url.format('sync/currentMatch'))
+    res = requests.get(url.format('sync/current_match'))
     print(res)
 
 
