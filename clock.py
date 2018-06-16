@@ -1,3 +1,6 @@
+import django
+django.setup()
+
 from apscheduler.schedulers.blocking import BlockingScheduler
 from api import models
 import requests
