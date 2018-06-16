@@ -30,15 +30,9 @@ def index(request):
         }
         return HttpResponse(json.dumps(res))
     else:
-        fmt = '%Y-%m-%d %H:%M:%S %Z%z'
-        tz = pytz.timezone('Asia/Kolkata')
-        date = tz.localize(datetime.datetime.now()).strftime(fmt)
-        print(date)
-        hour = int(date[11: 13])
-        minutes = (int(date[14: 16])) / 60
-        time = int(int(hour + minutes) + 5.5)
-        print(time)
-        if time <= 13:
+        date = datetime.datetime.now() + datetime.timedelta(hours=5, minutes=30)
+
+        if date.hour <= 13:
             response = models.PastMatchModel.objects.all()
             if len(response) > 0:
                 data = response.order_by("-id")[0].matches
