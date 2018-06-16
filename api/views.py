@@ -30,10 +30,12 @@ def index(request):
         date = tz.localize(datetime.datetime.now()).strftime(fmt)
         print("#####################################################")
         print(date)
-        time = int(date[11: 13])
+        hour = int(date[11: 13])
+        minutes = (int(date[14: 16])) / 60
+        time = int(int(hour + minutes) + 5.5)
         print(time)
         print("#####################################################")
-        if time <= 12:
+        if time <= 13:
             response = models.PastMatchModel.objects.all()
             if len(response) > 0:
                 return HttpResponse(response.order_by("-id")[0].matches)
