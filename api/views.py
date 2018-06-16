@@ -23,7 +23,7 @@ def index(request):
     result = validate_data(response)
     if result['status']:
         match_object = datamodels.CurrentMatch(**result['match_json'][0])
-        data = match_object.__dict__
+        data = json.dumps(match_object.__dict__)
         res = {
             'type': 'present',
             'fixtures': data
