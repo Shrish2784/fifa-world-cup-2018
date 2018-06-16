@@ -69,9 +69,11 @@ def sync_past_future_match(request):
 
     for i in range(len(completed)):
         print("Convert to datamodel___________________________")
-        print(completed[i])
-        completed[i] = datamodels.PastMatch(**completed[i])
 
+        completed[i] = datamodels.PastMatch(**completed[i])
+        print(completed[i])
+
+    print(json.dumps(completed))
 
     model = models.PastMatchModel.objects.create(matches=json.dumps(completed))
     model.save()
