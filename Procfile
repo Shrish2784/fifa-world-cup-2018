@@ -1,2 +1,2 @@
 web: gunicorn fifapi.wsgi
-clock: python api/clocktest.py
+clock: python api/clock.py
