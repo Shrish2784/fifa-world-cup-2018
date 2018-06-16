@@ -70,8 +70,7 @@ def sync_past_future_match(request):
     for i in range(len(completed)):
         print("Convert to datamodel___________________________")
 
-        completed[i] = datamodels.PastMatch(**completed[i])
-        print(completed[i])
+        completed[i] = datamodels.PastMatch(**completed[i]).__dict__
 
     print(json.dumps(completed))
 
