@@ -61,16 +61,14 @@ def sync_past_future_match(request):
             completed.append(match)
             n_completed_matches += 1
         elif match['status'] == 'future':
-            match_json = json.loads(match)
-            future.append(datamodels.Match(**match_json))
+            future.append(datamodels.Match(**match))
             if len(future) >= 3:
                 break
     if n_completed_matches >= 3:
         completed = completed[(len(completed) - 3): len(completed)]
 
     for i in range(len(completed)):
-        match_json = json.loads(completed[i])
-        completed[i] = datamodels.PastMatch(**match_json)
+        completed[i] = datamodels.PastMatch(**completed[i])
 
     model = models.PastMatchModel.objects.create(matches=json.dumps(completed))
     model.save()
