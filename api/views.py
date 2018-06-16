@@ -61,7 +61,7 @@ def sync_past_future_match(request):
             completed.append(match)
             n_completed_matches += 1
         elif match['status'] == 'future':
-            future.append(datamodels.Match(**match))
+            future.append(datamodels.Match(**match).__dict__)
             if len(future) >= 3:
                 break
     if n_completed_matches >= 3:
