@@ -67,9 +67,10 @@ def sync_current_match(request):
     model.save()
 
     models.CurrentMatchModel.objects.exclude(id=model.id).delete()
+    return HttpResponse(json.dumps(model.__dict__))
 
 
-def sync_past_future_match(request):
+def sync_matches(request):
     completed = []
     future = []
     n_completed_matches = 0
@@ -87,17 +88,20 @@ def sync_past_future_match(request):
         completed = completed[(len(completed) - 3): len(completed)]
 
     for i in range(len(completed)):
-        print("Convert to datamodel___________________________")
+        completed[i] = datamodels.Match(**completed[i]).__dict__
 
-        completed[i] = datamodels.PastMatch(**completed[i]).__dict__
-
-    print(json.dumps(completed))
+    list = []
 
     model = models.PastMatchModel.objects.create(matches=json.dumps(completed))
     model.save()
+    list.append(list.append(model.__dict__))
     models.PastMatchModel.objects.exclude(id=model.id).delete()
 
     model = models.FutureMatchModel.objects.create(matches=json.dumps(future))
     model.save()
+    list.append(list.append(model.__dict__))
     models.FutureMatchModel.objects.exclude(id=model.id).delete()
-    return HttpResponse("success")
+
+    response = json.dumps(list)
+
+    return HttpResponse(response)

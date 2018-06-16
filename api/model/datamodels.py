@@ -1,15 +1,18 @@
-class Match():
+from datetime import datetime, timedelta
+
+
+class Match:
+
     def __init__(self, home_team, away_team, datetime, winner, **kwargs):
         self.home_team = home_team
         self.away_team = away_team
-        self.datetime = datetime
+        self.datetime = self.get_time(datetime)
         self.winner = winner
 
-
-class PastMatch(Match):
-
-    def __init__(self, home_team, away_team, datetime, winner, **kwargs):
-        super().__init__(home_team, away_team, datetime, winner, **kwargs)
+    def get_time(self, datetime):
+        fmt = '%d %B %H:%M'
+        dt = datetime.strptime(datetime, '%Y-%m-%dT%H:%M:%Sz')
+        return (dt + timedelta(hours=2, minutes=30)).strftime(fmt)
 
 
 class CurrentMatch(Match):
