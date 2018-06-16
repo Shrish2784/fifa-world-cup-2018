@@ -28,7 +28,11 @@ def index(request):
         fmt = '%Y-%m-%d %H:%M:%S %Z%z'
         tz = pytz.timezone('Asia/Kolkata')
         date = tz.localize(datetime.datetime.now()).strftime(fmt)
+        print("#####################################################")
+        print(date)
         time = int(date[11: 13])
+        print(time)
+        print("#####################################################")
         if time <= 12:
             response = models.PastMatchModel.objects.all()
             if len(response) > 0:
