@@ -6,13 +6,13 @@ class Match:
     def __init__(self, home_team, away_team, datetime, winner, **kwargs):
         self.home_team = home_team
         self.away_team = away_team
-        self.datetime = self.get_time(datetime)
+        self.datetime = self.get_time(dt=datetime)
         self.winner = winner
 
-    def get_time(self, datetime):
+    def get_time(self, dt):
         fmt = '%d %B %H:%M'
-        dt = datetime.strptime(datetime, '%Y-%m-%dT%H:%M:%Sz')
-        return (dt + timedelta(hours=2, minutes=30)).strftime(fmt)
+        dt_object = datetime.strptime(dt, '%Y-%m-%dT%H:%M:%Sz')
+        return (dt_object + timedelta(hours=2, minutes=30)).strftime(fmt)
 
 
 class CurrentMatch(Match):
