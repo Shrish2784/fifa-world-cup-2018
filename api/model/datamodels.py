@@ -12,7 +12,7 @@ class Match:
     def get_time(self, dt):
         fmt = '%d %B %H:%M'
         dt_object = datetime.strptime(dt, '%Y-%m-%dT%H:%M:%Sz')
-        return (dt_object + timedelta(hours=2, minutes=30)).strftime(fmt)
+        return (dt_object + timedelta(hours=5, minutes=30)).strftime(fmt)
 
 
 class CurrentMatch(Match):
