@@ -44,7 +44,7 @@ def index(request):
                 data = response.order_by("-id")[0].matches
                 res = {
                     'type': 'past',
-                    'fixtures': data
+                    'fixtures': json.loads(data)
                 }
                 return HttpResponse(json.dumps(res))
         else:
@@ -53,7 +53,7 @@ def index(request):
                 data = response.order_by("-id")[0].matches
                 res = {
                     'type': 'future',
-                    'fixtures': data
+                    'fixtures': json.loads(data)
                 }
                 return HttpResponse(json.dumps(res))
     dict = {}
