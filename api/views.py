@@ -1,3 +1,4 @@
+import pytz
 from django.http import HttpResponse
 from . import models
 from .model import datamodels
@@ -24,8 +25,10 @@ def index(request):
         match_object = datamodels.CurrentMatch(**result['match_json'][0])
         return HttpResponse(json.dumps(match_object.__dict__))
     else:
-        d = str(datetime.datetime.now())
-        time = int(d[11: 13])
+        fmt = '%Y-%m-%d %H:%M:%S %Z%z'
+        tz = pytz.timezone('Asia/Kolkata')
+        date = tz.localize(datetime.datetime.now()).strftime(fmt)
+        time = int(date[11: 13])
         if time <= 12:
             response = models.PastMatchModel.objects.all()
             if len(response) > 0:
