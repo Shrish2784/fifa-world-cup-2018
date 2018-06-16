@@ -41,7 +41,7 @@ def index(request):
         if time <= 13:
             response = models.PastMatchModel.objects.all()
             if len(response) > 0:
-                data = response.order_by("-id")[0].matches
+                data = json.dumps(response.order_by("-id")[0].matches)
                 res = {
                     'type': 'past',
                     'fixtures': data
@@ -50,7 +50,7 @@ def index(request):
         else:
             response = models.FutureMatchModel.objects.all()
             if len(response) > 0:
-                data = response.order_by("-id")[0].matches
+                data = json.dumps(response.order_by("-id")[0].matches)
                 res = {
                     'type': 'future',
                     'fixtures': data
