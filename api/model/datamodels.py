@@ -20,14 +20,14 @@ class CurrentMatch(Match):
     # offside.png  |available.
 
     event_to_icon = {
-        'goal': 'goal_scored.png',
-        'goal-own': 'own_goal.png',
-        'goal-penalty': 'penalty_miss.png',
-        'red-card': 'straight_red_card.png',
-        'yellow-card': 'yellow.png',
-        'yellow-card-second': 'second_yellow_card.png',
-        'substitution-in': 'substitution.png',
-        'substitution-in halftime': 'substitution.png'
+        'goal': 'goal_scored',
+        'goal-own': 'own_goal',
+        'goal-penalty': 'penalty_miss',
+        'red-card': 'straight_red_card',
+        'yellow-card': 'yellow',
+        'yellow-card-second': 'second_yellow_card',
+        'substitution-in': 'substitution',
+        'substitution-in halftime': 'substitution'
     }
 
     def __init__(self, home_team, away_team, datetime, winner, time, home_team_events,
