@@ -69,6 +69,7 @@ def sync_matches(request):
     completed = []
     future = []
     n_completed_matches = 0
+    n_future_matches = 0
     matches = requests.get(url.format('')).json()
     print("-----------------Scheduled job sync_matches ran-----------------------")
     for match in matches:
@@ -76,15 +77,24 @@ def sync_matches(request):
             completed.append(match)
             n_completed_matches += 1
         elif match['status'] == 'future':
-            future.append(datamodels.Match(**match).__dict__)
-            if len(future) >= 3:
-                break
+            future.append(match)
+            n_future_matches += 1
+
     if n_completed_matches >= 3:
         completed = completed[(len(completed) - 3): len(completed)]
 
+    if n_future_matches >= 3:
+        future = future[(len(future) - 3): len(future)]
+
     for i in range(len(completed)):
         completed[i] = datamodels.Match(**completed[i]).__dict__
+        print("-----------------")
         print(completed[i])
+
+    for i in range(len(future)):
+        future.append(datamodels.Match(**match).__dict__)
+        print("-----------------")
+        print(future[i])
 
     model = models.PastMatchModel.objects.create(matches=json.dumps(completed))
     model.save()
