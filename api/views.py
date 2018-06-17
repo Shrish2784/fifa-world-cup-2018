@@ -61,7 +61,8 @@ def sync_current_match(request):
     model.save()
 
     models.CurrentMatchModel.objects.exclude(id=model.id).delete()
-    return HttpResponse(json.dumps(model.__dict__))
+    print(model.__dict__)
+    return HttpResponse("Success")
 
 
 def sync_matches(request):
@@ -83,6 +84,7 @@ def sync_matches(request):
 
     for i in range(len(completed)):
         completed[i] = datamodels.Match(**completed[i]).__dict__
+        print(completed[i])
 
     model = models.PastMatchModel.objects.create(matches=json.dumps(completed))
     model.save()
