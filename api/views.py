@@ -91,7 +91,4 @@ def sync_matches(request):
     model = models.FutureMatchModel.objects.create(matches=json.dumps(future))
     model.save()
     models.FutureMatchModel.objects.exclude(id=model.id).delete()
-    completed = completed+future
-    response = json.dumps(completed)
-
-    return HttpResponse(response)
+    return HttpResponse("success")
