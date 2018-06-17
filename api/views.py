@@ -1,20 +1,62 @@
-import pytz
 from django.http import HttpResponse
 from . import models
 from .model import datamodels
 import datetime
 import json
 import requests
-
 url = 'http://worldcup.sfg.io/matches/{}'
+
+
+def index_temp(request):
+    # #PAST#
+    past_matches_queryset = models.PastMatchModel.objects.all()
+    if len(past_matches_queryset) > 0:
+        data = past_matches_queryset.order_by("-id")[0].matches
+        past_matches = {
+            'type': 'past',
+            'fixtures': json.loads(data)
+        }
+    else:
+        past_matches = {}
+
+    # #PRESENT#
+    current_matches_queryset = models.CurrentMatchModel.objects.all()
+    validation_result = validate_data(current_matches_queryset)
+    if validation_result['status']:
+        match_object = datamodels.CurrentMatch(**validation_result['match_object'][0])
+        data = match_object.__dict__
+        current_matches = {
+            'type': 'present',
+            'fixtures': data
+        }
+    else:
+        current_matches = {}
+
+    # #FUTURE#
+    future_matches_queryset = models.FutureMatchModel.objects.all()
+    if len(future_matches_queryset) > 0:
+        data = future_matches_queryset.order_by("-id")[0].matches
+        future_matches = {
+            'type': 'future',
+            'fixtures': json.loads(data)
+        }
+    else:
+        future_matches = {}
+
+    response = {
+        {'type': 'past', 'matches': past_matches},
+        {'type': 'current', 'matches': current_matches},
+        {'type': 'future', 'matches': future_matches}
+    }
+    return HttpResponse(json.dumps(response), content_type='application/json')
 
 
 def validate_data(res):
     if len(res) > 0:
         match_details = res.order_by("-id")[0].match_details
-        match_json = json.loads(match_details)
-        if len(match_json) > 0:
-            return {'status': True, 'match_json': match_json}
+        match_object = json.loads(match_details)
+        if len(match_object) > 0:
+            return {'status': True, 'match_object': match_object}
     return {'status': False}
 
 
@@ -22,7 +64,7 @@ def index(request):
     response = models.CurrentMatchModel.objects.all()
     result = validate_data(response)
     if result['status']:
-        match_object = datamodels.CurrentMatch(**result['match_json'][0])
+        match_object = datamodels.CurrentMatch(**result['match_object'][0])
         data = match_object.__dict__
         res = {
             'type': 'present',

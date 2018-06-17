@@ -16,16 +16,38 @@ class Match:
 
 
 class CurrentMatch(Match):
-    def __init__(self, home_team, away_team, datetime, time, winner, home_team_events,
+    def __init__(self, home_team, away_team, datetime, winner, time, home_team_events,
                  away_team_events, **kwargs):
-        super().__init__(home_team, away_team, datetime, winner, **kwargs)
-        self.time = time
-        if len(home_team_events) > 0:
-            self.home_team_event = home_team_events[-1]
-        else:
-            self.home_team_event = None
 
-        if len(away_team_events) > 0:
-            self.away_team_event = away_team_events[-1]
+        self.time = time
+        self.home_team_event = self.get_event(home_team_events)
+        self.away_team_event = self.get_event(away_team_events)
+
+        super().__init__(home_team, away_team, datetime, winner, **kwargs)
+
+    def get_event(self, events):
+        if len(events) > 0:
+            event = events[-1]
+
+            # injury.png   |Key is not
+            # offside.png  |available.
+
+            event_to_icon = {
+                'goal': 'goal_scored.png',
+                'goal-own': 'own_goal.png',
+                'goal-penalty': 'penalty_miss.png',
+                'red-card': 'straight_red_card.png',
+                'yellow-card': 'yellow.png',
+                'yellow-card-card': 'second_yellow_card.png',
+                'substitution-in': 'substitution.png',
+                'substitution-in halftime': 'substitution.png'
+            }
+
+            event_object = {
+                'event_text': event['player'] + " " + event['time'],
+                'event_icon_filename': event_to_icon[event['type_of_event']]
+            }
         else:
-            self.away_team_event = None
+            event_object = None
+
+        return event_object
