@@ -84,18 +84,14 @@ def sync_matches(request):
     for i in range(len(completed)):
         completed[i] = datamodels.Match(**completed[i]).__dict__
 
-    list = []
-
     model = models.PastMatchModel.objects.create(matches=json.dumps(completed))
     model.save()
-    list.append(model.__dict__)
     models.PastMatchModel.objects.exclude(id=model.id).delete()
 
     model = models.FutureMatchModel.objects.create(matches=json.dumps(future))
     model.save()
-    list.append(model.__dict__)
     models.FutureMatchModel.objects.exclude(id=model.id).delete()
-
-    response = json.dumps(list)
+    completed = completed+future
+    response = json.dumps(completed)
 
     return HttpResponse(response)
