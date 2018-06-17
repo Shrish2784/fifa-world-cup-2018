@@ -28,7 +28,7 @@ def index(request):
             'type': 'present',
             'fixtures': data
         }
-        return HttpResponse(json.dumps(res))
+        return HttpResponse(json.dumps(res), content_type='application/json')
     else:
         date = datetime.datetime.now() + datetime.timedelta(hours=5, minutes=30)
 
