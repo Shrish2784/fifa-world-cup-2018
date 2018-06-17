@@ -40,7 +40,7 @@ def index(request):
                     'type': 'past',
                     'fixtures': json.loads(data)
                 }
-                return HttpResponse(json.dumps(res))
+                return HttpResponse(json.dumps(res), content_type='application/json')
         else:
             response = models.FutureMatchModel.objects.all()
             if len(response) > 0:
@@ -49,10 +49,10 @@ def index(request):
                     'type': 'future',
                     'fixtures': json.loads(data)
                 }
-                return HttpResponse(json.dumps(res))
+                return HttpResponse(json.dumps(res), content_type='application/json')
     dict = {}
     dict['error'] = "No data to provide!"
-    return HttpResponse(json.dumps(dict))
+    return HttpResponse(json.dumps(dict), content_type='application/json')
 
 
 def sync_current_match(request):
