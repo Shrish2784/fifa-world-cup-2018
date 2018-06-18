@@ -9,4 +9,5 @@ urlpatterns = [
     path('test/past/', views.past_match_response, name='test_past'),
     path('test/current/', views.current_match_response, name='test_current'),
     path('test/future/', views.future_match_response, name='test_future'),
+    path('test/empty/', views.empty_response, name='test_empty')
 ]

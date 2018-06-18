@@ -189,6 +189,10 @@ def future_match_response(request):
         }
         return HttpResponse(json.dumps(res), content_type='application/json')
 
+# Empty Reponse
+def empty_response(request):
+    return HttpResponse(json.dumps({}), content_type='application/json')
+
 
 # Sync current matches
 def sync_current_match(request):
