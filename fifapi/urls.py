@@ -16,8 +16,26 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+class Data:
+    names = set()
+
+    def collect_data(self):
+        global names
+        file = open('names')
+        for f in file:
+            l = list(f.split("\n"))
+            self.names.add(l[0])
+
+    def print_len(self):
+        print(len(self.names))
+
+d = Data()
+d.collect_data()
+d.print_len()
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('api.urls')),
 ]
+
