@@ -7,50 +7,6 @@ import requests
 url = 'http://worldcup.sfg.io/matches/{}'
 
 
-def index_temp(request):
-    # #PAST#
-    past_matches_queryset = models.PastMatchModel.objects.all()
-    if len(past_matches_queryset) > 0:
-        data = past_matches_queryset.order_by("-id")[0].matches
-        past_matches = {
-            'type': 'past',
-            'fixtures': json.loads(data)
-        }
-    else:
-        past_matches = {}
-
-    # #PRESENT#
-    current_matches_queryset = models.CurrentMatchModel.objects.all()
-    validation_result = validate_data(current_matches_queryset)
-    if validation_result['status']:
-        match_object = datamodels.CurrentMatch(**validation_result['match_object'][0])
-        data = match_object.__dict__
-        current_matches = {
-            'type': 'present',
-            'fixtures': data
-        }
-    else:
-        current_matches = {}
-
-    # #FUTURE#
-    future_matches_queryset = models.FutureMatchModel.objects.all()
-    if len(future_matches_queryset) > 0:
-        data = future_matches_queryset.order_by("-id")[0].matches
-        future_matches = {
-            'type': 'future',
-            'fixtures': json.loads(data)
-        }
-    else:
-        future_matches = {}
-
-    response = {
-        {'type': 'past', 'matches': past_matches},
-        {'type': 'current', 'matches': current_matches},
-        {'type': 'future', 'matches': future_matches}
-    }
-    return HttpResponse(json.dumps(response), content_type='application/json')
-
-
 def validate_data(res):
     if len(res) > 0:
         match_details = res.order_by("-id")[0].match_details
@@ -62,44 +18,60 @@ def validate_data(res):
 
 def index(request):
     """
-    Response giving past, current, future depending upon circumstances.
+        Response giving past, current, future matches details depending upon the time.
 
     """
-    response = models.CurrentMatchModel.objects.all()
-    result = validate_data(response)
-    if result['status']:
-        match_object = datamodels.CurrentMatch(**result['match_object'][0])
-        data = match_object.__dict__
-        res = {
-            'type': 'present',
-            'fixtures': data
-        }
-        return HttpResponse(json.dumps(res), content_type='application/json')
-    else:
-        date = datetime.datetime.now() + datetime.timedelta(hours=5, minutes=30)
 
-        if date.hour < 12:
-            response = models.PastMatchModel.objects.all()
-            if len(response) > 0:
-                data = response.order_by("-id")[0].matches
-                res = {
-                    'type': 'past',
-                    'fixtures': json.loads(data)
-                }
-                return HttpResponse(json.dumps(res), content_type='application/json')
+    date = datetime.datetime.now() + datetime.timedelta(hours=5, minutes=30)
+    if 10 <= date.hour < 12:
+        # PAST
+        response = models.PastMatchModel.objects.all()
+        if len(response) > 0:
+            data = response.order_by("-id")[0].matches
+            res = {
+                'type': 'past',
+                'show_after_minutes': 5,
+                'fixtures': json.loads(data)
+            }
+            return HttpResponse(json.dumps(res), content_type='application/json')
         else:
+            # EMPTY
+            return HttpResponse(json.dumps({}), content_type='application/json')
+
+    elif 12 <= date.hour < 5:
+        # EMPTY
+        return HttpResponse(json.dumps({}), content_type='application/json')
+
+    elif 5 <= date.hour < 11:
+        # Current
+        response = models.CurrentMatchModel.objects.all()
+        result = validate_data(response)
+        if result['status']:
+            match_object = datamodels.CurrentMatch(**result['match_object'][0])
+            data = match_object.__dict__
+            res = {
+                'type': 'present',
+                'show_after_minutes': 2.5,
+                'fixtures': data
+            }
+            return HttpResponse(json.dumps(res), content_type='application/json')
+        else:
+            # Future
             response = models.FutureMatchModel.objects.all()
             if len(response) > 0:
                 data = response.order_by("-id")[0].matches
                 res = {
                     'type': 'future',
+                    'show_after_minutes': 5,
                     'fixtures': json.loads(data)
                 }
                 return HttpResponse(json.dumps(res), content_type='application/json')
-    error = {
-        'error': 'No data to provide!'
-    }
-    return HttpResponse(json.dumps(error), content_type='application/json')
+            else:
+                return HttpResponse(json.dumps({}), content_type='application/json')
+
+    else:
+        # Empty
+        return HttpResponse(json.dumps({}), content_type='application/json')
 
 
 # Test past matches response
@@ -109,12 +81,14 @@ def past_match_response(request):
         data = response.order_by("-id")[0].matches
         res = {
             'type': 'past',
+            'show_after_minutes': 5,
             'fixtures': json.loads(data)
         }
         return HttpResponse(json.dumps(res), content_type='application/json')
     else:
         res = {
             'type': 'past',
+            'show_after_minutes': 5,
             'fixtures': 'Not Available'
         }
         return HttpResponse(json.dumps(res), content_type='application/json')
@@ -162,15 +136,17 @@ def current_match_response(request):
         }
     ]
 
-    result =  {'status': True, 'match_object': match_object}
+    result = {'status': True, 'match_object': match_object}
 
     match_object = datamodels.CurrentMatch(**result['match_object'][0])
     data = match_object.__dict__
     res = {
         'type': 'present',
+        'show_after_minutes': 2.5,
         'fixtures': data
     }
     return HttpResponse(json.dumps(res), content_type='application/json')
+
 
 # Test future matches response
 def future_match_response(request):
@@ -179,15 +155,18 @@ def future_match_response(request):
         data = response.order_by("-id")[0].matches
         res = {
             'type': 'future',
+            'show_after_minutes': 5,
             'fixtures': json.loads(data)
         }
         return HttpResponse(json.dumps(res), content_type='application/json')
     else:
         res = {
             'type': 'future',
+            'show_after_minutes': 5,
             'fixtures': 'Not Available'
         }
         return HttpResponse(json.dumps(res), content_type='application/json')
+
 
 # Empty Reponse
 def empty_response(request):
