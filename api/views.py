@@ -1,17 +1,14 @@
+import pytz
 from django.http import HttpResponse
 from . import models
 from .model import datamodels
 import datetime
 import json
 import requests
-
-
 url = 'http://worldcup.sfg.io/matches/{}'
 
+
 def index_temp(request):
-    """
-    Response giving all the matches in one json response
-    """
     # #PAST#
     past_matches_queryset = models.PastMatchModel.objects.all()
     if len(past_matches_queryset) > 0:
@@ -54,6 +51,7 @@ def index_temp(request):
     }
     return HttpResponse(json.dumps(response), content_type='application/json')
 
+
 def validate_data(res):
     if len(res) > 0:
         match_details = res.order_by("-id")[0].match_details
@@ -62,7 +60,7 @@ def validate_data(res):
             return {'status': True, 'match_object': match_object}
     return {'status': False}
 
-#Main api response
+
 def index(request):
     """
     Response cgiving past, current, future depending upon circumstances.
