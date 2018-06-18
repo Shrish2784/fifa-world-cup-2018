@@ -72,7 +72,7 @@ def index(request):
         data = match_object.__dict__
         res = {
             'type': 'present',
-            'fixtures': [data]
+            'fixtures': data
         }
         return HttpResponse(json.dumps(res), content_type='application/json')
     else:
@@ -168,7 +168,7 @@ def current_match_response(request):
     data = match_object.__dict__
     res = {
         'type': 'present',
-        'fixtures': [data]
+        'fixtures': data
     }
     return HttpResponse(json.dumps(res), content_type='application/json')
 
