@@ -79,7 +79,7 @@ def index(request):
     else:
         date = datetime.datetime.now() + datetime.timedelta(hours=5, minutes=30)
 
-        if date.hour <= 13:
+        if date.hour < 12:
             response = models.PastMatchModel.objects.all()
             if len(response) > 0:
                 data = response.order_by("-id")[0].matches
