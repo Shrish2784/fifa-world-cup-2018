@@ -11,7 +11,7 @@ class ApiConfig(AppConfig):
         print("-------------------------RAN READY FUNCTION----------------------------")
 
         global names
-        file = open('validation_data/names.txt')
+        file = open('validation_data/names')
         for f in file:
             l = list(f.split("\n"))
             names.add(l[0])
