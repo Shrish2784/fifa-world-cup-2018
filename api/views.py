@@ -1,4 +1,3 @@
-import pytz
 from django.http import HttpResponse
 from . import models
 from .model import datamodels
@@ -63,7 +62,7 @@ def validate_data(res):
 
 def index(request):
     """
-    Response cgiving past, current, future depending upon circumstances.
+    Response giving past, current, future depending upon circumstances.
 
     """
     response = models.CurrentMatchModel.objects.all()
@@ -97,11 +96,13 @@ def index(request):
                     'fixtures': json.loads(data)
                 }
                 return HttpResponse(json.dumps(res), content_type='application/json')
-    dict = {}
-    dict['error'] = "No data to provide!"
-    return HttpResponse(json.dumps(dict), content_type='application/json')
+    error = {
+        'error': 'No data to provide!'
+    }
+    return HttpResponse(json.dumps(error), content_type='application/json')
 
-#Test past matches response
+
+# Test past matches response
 def past_match_response(request):
     response = models.PastMatchModel.objects.all()
     if len(response) > 0:
@@ -118,26 +119,60 @@ def past_match_response(request):
         }
         return HttpResponse(json.dumps(res), content_type='application/json')
 
-#Test current matches response
-def current_match_response(request):
-    response = models.CurrentMatchModel.objects.all()
-    result = validate_data(response)
-    if result['status']:
-        match_object = datamodels.CurrentMatch(**result['match_object'][0])
-        data = match_object.__dict__
-        res = {
-            'type': 'present',
-            'fixtures': data
-        }
-        return HttpResponse(json.dumps(res), content_type='application/json')
-    else:
-        res = {
-            'type': 'current',
-            'fixtures': 'Not Available'
-        }
-        return HttpResponse(json.dumps(res), content_type='application/json')
 
-#Test future matches response
+# Test current matches response
+def current_match_response(request):
+    match_object = [
+        {
+            "venue": "Brazil",
+            "location": "Arena Corinthians",
+            "datetime": "2018-06-18T09:43:51Z",
+            "status": "in progress",
+            "time": "halftime",
+            "last_score_update_at": "2018-06-15T19:01:58.773Z",
+            "last_event_update_at": "2018-06-15T19:01:58.773Z",
+            "home_team": {
+                "country": "Brazil",
+                "code": "BRA",
+                "goals": 3
+            },
+            "away_team": {
+                "country": "Croatia",
+                "code": "CRO",
+                "goals": 1
+            },
+            "winner": "Brazil",
+
+            "home_team_events": [
+                {
+                    "id": 11,
+                    "type_of_event": "goal-own",
+                    "player": "Marcelo",
+                    "time": "11"
+                }
+            ],
+            "away_team_events": [
+                {
+                    "id": 23,
+                    "type_of_event": "substitution-in",
+                    "player": "BrozoviĆ",
+                    "time": "61"
+                }
+            ]
+        },
+    ]
+
+    result =  {'status': True, 'match_object': match_object}
+
+    match_object = datamodels.CurrentMatch(**result['match_object'][0])
+    data = match_object.__dict__
+    res = {
+        'type': 'present',
+        'fixtures': data
+    }
+    return HttpResponse(json.dumps(res), content_type='application/json')
+
+# Test future matches response
 def future_match_response(request):
     response = models.FutureMatchModel.objects.all()
     if len(response) > 0:
@@ -154,17 +189,18 @@ def future_match_response(request):
         }
         return HttpResponse(json.dumps(res), content_type='application/json')
 
-#Sync current matches
+
+# Sync current matches
 def sync_current_match(request):
     res = requests.get(url.format('current')).json()
     model = models.CurrentMatchModel.objects.create(match_details=json.dumps(res))
     model.save()
 
     models.CurrentMatchModel.objects.exclude(id=model.id).delete()
-    print(model.__dict__)
     return HttpResponse("Success")
 
-#Sync all the other matches
+
+# Sync all the other matches
 def sync_matches(request):
     completed = []
     future = []
@@ -173,7 +209,6 @@ def sync_matches(request):
 
     matches = sorted(matches, key=lambda x: x['datetime'])
 
-    print("-----------------Scheduled job sync_matches ran-----------------------")
     for match in matches:
         if match['status'] == 'completed':
             completed.append(match)
@@ -188,7 +223,6 @@ def sync_matches(request):
 
     for i in range(len(completed)):
         completed[i] = datamodels.Match(**completed[i]).__dict__
-        print(completed[i])
 
     model = models.PastMatchModel.objects.create(matches=json.dumps(completed))
     model.save()
