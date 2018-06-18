@@ -38,11 +38,11 @@ def index(request):
             # EMPTY
             return HttpResponse(json.dumps({}), content_type='application/json')
 
-    elif 12 <= date.hour < 5:
+    elif 12 <= date.hour < 17:
         # EMPTY
         return HttpResponse(json.dumps({}), content_type='application/json')
 
-    elif 5 <= date.hour < 11:
+    elif 17 <= date.hour < 23:
         # Current
         response = models.CurrentMatchModel.objects.all()
         result = validate_data(response)
