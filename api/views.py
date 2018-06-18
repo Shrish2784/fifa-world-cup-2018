@@ -4,10 +4,14 @@ from .model import datamodels
 import datetime
 import json
 import requests
+
+
 url = 'http://worldcup.sfg.io/matches/{}'
 
-
 def index_temp(request):
+    """
+    Response giving all the matches in one json response
+    """
     # #PAST#
     past_matches_queryset = models.PastMatchModel.objects.all()
     if len(past_matches_queryset) > 0:
@@ -50,7 +54,6 @@ def index_temp(request):
     }
     return HttpResponse(json.dumps(response), content_type='application/json')
 
-
 def validate_data(res):
     if len(res) > 0:
         match_details = res.order_by("-id")[0].match_details
@@ -59,8 +62,12 @@ def validate_data(res):
             return {'status': True, 'match_object': match_object}
     return {'status': False}
 
-
+#Main api response
 def index(request):
+    """
+    Response cgiving past, current, future depending upon circumstances.
+
+    """
     response = models.CurrentMatchModel.objects.all()
     result = validate_data(response)
     if result['status']:
@@ -96,7 +103,60 @@ def index(request):
     dict['error'] = "No data to provide!"
     return HttpResponse(json.dumps(dict), content_type='application/json')
 
+#Test past matches response
+def past_match_response(request):
+    response = models.PastMatchModel.objects.all()
+    if len(response) > 0:
+        data = response.order_by("-id")[0].matches
+        res = {
+            'type': 'past',
+            'fixtures': json.loads(data)
+        }
+        return HttpResponse(json.dumps(res), content_type='application/json')
+    else:
+        res = {
+            'type': 'past',
+            'fixtures': 'Not Available'
+        }
+        return HttpResponse(json.dumps(res), content_type='application/json')
 
+#Test current matches response
+def current_match_response(request):
+    response = models.CurrentMatchModel.objects.all()
+    result = validate_data(response)
+    if result['status']:
+        match_object = datamodels.CurrentMatch(**result['match_object'][0])
+        data = match_object.__dict__
+        res = {
+            'type': 'present',
+            'fixtures': data
+        }
+        return HttpResponse(json.dumps(res), content_type='application/json')
+    else:
+        res = {
+            'type': 'current',
+            'fixtures': 'Not Available'
+        }
+        return HttpResponse(json.dumps(res), content_type='application/json')
+
+#Test future matches response
+def future_match_response(request):
+    response = models.FutureMatchModel.objects.all()
+    if len(response) > 0:
+        data = response.order_by("-id")[0].matches
+        res = {
+            'type': 'future',
+            'fixtures': json.loads(data)
+        }
+        return HttpResponse(json.dumps(res), content_type='application/json')
+    else:
+        res = {
+            'type': 'future',
+            'fixtures': 'Not Available'
+        }
+        return HttpResponse(json.dumps(res), content_type='application/json')
+
+#Sync current matches
 def sync_current_match(request):
     res = requests.get(url.format('current')).json()
     model = models.CurrentMatchModel.objects.create(match_details=json.dumps(res))
@@ -106,12 +166,15 @@ def sync_current_match(request):
     print(model.__dict__)
     return HttpResponse("Success")
 
-
+#Sync all the other matches
 def sync_matches(request):
     completed = []
     future = []
     n_completed_matches = 0
     matches = requests.get(url.format('?by_date=asc')).json()
+
+    matches = sorted(matches, key=lambda x: x['datetime'])
+
     print("-----------------Scheduled job sync_matches ran-----------------------")
     for match in matches:
         if match['status'] == 'completed':
@@ -121,6 +184,7 @@ def sync_matches(request):
             future.append(datamodels.Match(**match).__dict__)
             if len(future) >= 3:
                 break
+
     if n_completed_matches >= 3:
         completed = completed[(len(completed) - 3): len(completed)]
 
