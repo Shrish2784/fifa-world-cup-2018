@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from . import models
 from .model import datamodels
+from .apps import ApiConfig
 import datetime
 import json
 import requests
@@ -175,6 +176,9 @@ def empty_response(request):
 
 # Sync current matches
 def sync_current_match(request):
+
+    print(ApiConfig.names)
+
     res = requests.get(url.format('current')).json()
     model = models.CurrentMatchModel.objects.create(match_details=json.dumps(res))
     model.save()
