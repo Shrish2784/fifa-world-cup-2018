@@ -185,6 +185,7 @@ def sync_current_match(request):
 
 # Sync all the other matches
 def sync_matches(request):
+    t_date = (datetime.datetime.now() + datetime.timedelta(hours=5, minutes=30)).day
     completed = []
     future = []
     n_completed_matches = 0
@@ -197,7 +198,10 @@ def sync_matches(request):
             completed.append(match)
             n_completed_matches += 1
         elif match['status'] == 'future':
-            future.append(datamodels.Match(**match).__dict__)
+            match_object = datamodels.Match(**match).__dict__
+            m_date = datetime.datetime.strptime(match_object['datetime'], '%d %B %H:%M').day
+            if m_date == t_date:
+                future.append(match_object)
             if len(future) >= 3:
                 break
 
