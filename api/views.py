@@ -5,6 +5,7 @@ from .apps import ApiConfig
 import datetime
 import json
 import requests
+
 url = 'http://worldcup.sfg.io/matches/{}'
 
 
@@ -123,7 +124,7 @@ def current_match_response(request):
                     "id": 11,
                     "type_of_event": "goal-own",
                     "player": "Marcelo",
-                    "time": "11"
+                    "time": "11'"
                 }
             ],
             "away_team_events": [
@@ -131,7 +132,7 @@ def current_match_response(request):
                     "id": 23,
                     "type_of_event": "substitution-in",
                     "player": "BrozoviĆ",
-                    "time": "61"
+                    "time": "61'"
                 }
             ]
         }
@@ -176,7 +177,6 @@ def empty_response(request):
 
 # Sync current matches
 def sync_current_match(request):
-
     res = requests.get(url.format('current')).json()
     model = models.CurrentMatchModel.objects.create(match_details=json.dumps(res))
     model.save()

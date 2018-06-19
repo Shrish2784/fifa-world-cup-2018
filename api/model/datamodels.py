@@ -27,7 +27,9 @@ class CurrentMatch(Match):
         'yellow-card': 'yellow',
         'yellow-card-second': 'second_yellow_card',
         'substitution-in': 'substitution',
-        'substitution-in halftime': 'substitution'
+        'substitution-out': 'substitution',
+        'substitution-in halftime': 'substitution',
+
     }
 
     def __init__(self, home_team, away_team, datetime, winner, time, home_team_events,
@@ -40,17 +42,28 @@ class CurrentMatch(Match):
         super().__init__(home_team, away_team, datetime, winner, **kwargs)
 
     def get_event(self, events):
+
+        event_object = None
         if len(events) > 0:
-            event = events[-1]
 
-            last_name = list(event['player'].split(" "))
-            last_name = last_name[-1]
+            for i in range(len(events) - 1, -1, -1):
+                event = events[i]
 
-            event_object = {
-                'event_text': last_name + "  " + event['time'],
-                'event_icon_filename': self.event_to_icon[event['type_of_event']]
-            }
-        else:
-            event_object = None
+                if event['type_of_event'] in self.event_to_icon:
+
+                    last_name = (list(event['player'].split(" ")))[-1]
+                    if event['type_of_event'] == 'substitution-in' or event['type_of_event'] == 'substitution-in halftime':
+                        event_text = "[In]" + last_name + "  " + event['time']
+                    elif event['type_of_event'] == 'substitution-out':
+                        event_text = "[Out]" + last_name + "  " + event['time']
+                    else:
+                        event_text = last_name + "  " + event['time']
+
+                    event_object = {
+                        'event_text': event_text,
+                        'event_icon_filename': self.event_to_icon[event['type_of_event']]
+                    }
+
+                    break
 
         return event_object
