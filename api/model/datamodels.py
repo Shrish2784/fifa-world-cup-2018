@@ -22,7 +22,7 @@ class CurrentMatch(Match):
     event_to_icon = {
         'goal': 'goal_scored',
         'goal-own': 'own_goal',
-        'goal-penalty': 'penalty_miss',
+        'goal-penalty': 'goal_scored',
         'red-card': 'straight_red_card',
         'yellow-card': 'yellow',
         'yellow-card-second': 'second_yellow_card',
