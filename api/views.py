@@ -59,17 +59,18 @@ def index(request):
             return HttpResponse(json.dumps(res), content_type='application/json')
         else:
             # Future
-            response = models.FutureMatchModel.objects.all()
-            if len(response) > 0:
-                data = response.order_by("-id")[0].matches
-                res = {
-                    'type': 'future',
-                    'show_after_minutes': 5,
-                    'fixtures': json.loads(data)
-                }
-                return HttpResponse(json.dumps(res), content_type='application/json')
-            else:
-                return HttpResponse(json.dumps({}), content_type='application/json')
+            # response = models.FutureMatchModel.objects.all()
+            # if len(response) > 0:
+            #     data = response.order_by("-id")[0].matches
+            #     res = {
+            #         'type': 'future',
+            #         'show_after_minutes': 5,
+            #         'fixtures': json.loads(data)
+            #     }
+            #     return HttpResponse(json.dumps(res), content_type='application/json')
+            # else:
+            #     return HttpResponse(json.dumps({}), content_type='application/json')
+            return HttpResponse(json.dumps({}), content_type='application/json')
 
     else:
         # Empty
