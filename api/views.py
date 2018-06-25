@@ -58,7 +58,7 @@ def index(request):
             }
             return HttpResponse(json.dumps(res), content_type='application/json')
         else:
-            Future
+            # Future
             response = models.FutureMatchModel.objects.all()
             if len(response) > 0:
                 data = response.order_by("-id")[0].matches
